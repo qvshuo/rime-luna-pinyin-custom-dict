@@ -61,7 +61,7 @@ jobs:
       - name: Update Latest Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
+          tag_name: yuanshen
           name: "原神词库"
           body: |
             使用 mw2fcitx 自动生成的原神 Rime 拼音输入方案词库。
