@@ -1,0 +1,65 @@
+name: Sogou Internet Buzzwords
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download and Extract imewlconverter
+        run: |
+          wget https://github.com/studyzy/imewlconverter/releases/download/v3.2.0/imewlconverter_Linux.tar.gz
+          tar -xzvf imewlconverter_Linux.tar.gz
+
+      - name: Download Sogou Scel Dictionary
+        run: |
+          wget -O 网络流行新词.scel "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=网络流行新词"
+      
+      - name: Generate Dictionary File
+        run: |
+          dotnet publish/ImeWlConverterCmd.dll -i:scel ./网络流行新词.scel -o:rime ./buzzwords.dict.yaml -ct:pinyin -os:linux -r:100
+          
+          if [ ! -f "buzzwords.dict.yaml" ]; then
+            echo "::error::Dictionary file 'buzzwords.dict.yaml' was not generated."
+            exit 1
+          fi
+          echo "Dictionary file generated successfully."
+
+      - name: Write Dictionary Information
+        run: |
+          VERSION_DATE=$(TZ='Asia/Shanghai' date +'%Y%m%d')
+          
+          sed -i '1i ...' buzzwords.dict.yaml
+          sed -i '1i sort: by_weight' buzzwords.dict.yaml
+          sed -i "1i version: \"$VERSION_DATE\"" buzzwords.dict.yaml
+          sed -i '1i name: buzzwords' buzzwords.dict.yaml
+          sed -i '1i ---' buzzwords.dict.yaml
+
+
+      - name: Get Current Date for Release Title
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: buzzwords
+          name: "搜狗网络流行新词词库"
+          body: |
+            使用 imewlconverter 自动生成的搜狗网络流行新词 Rime 拼音输入方案词库。
+            最近更新于：${{ steps.date.outputs.date }}
+          files: buzzwords.dict.yaml
