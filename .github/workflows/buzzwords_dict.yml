@@ -3,7 +3,7 @@ name: Sogou Internet Buzzwords
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: '59 0 * * 0'
 
 jobs:
   build-and-release:
