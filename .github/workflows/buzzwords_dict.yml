@@ -20,15 +20,13 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Download and Extract imewlconverter
+      - name: Prepare Tools and Source
         run: |
-          wget https://github.com/studyzy/imewlconverter/releases/download/v3.2.0/imewlconverter_Linux.tar.gz
+          wget -q https://github.com/studyzy/imewlconverter/releases/download/v3.2.0/imewlconverter_Linux.tar.gz
           tar -xzvf imewlconverter_Linux.tar.gz
+          
+          wget -q -O 网络流行新词.scel "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=网络流行新词"
 
-      - name: Download Sogou Scel Dictionary
-        run: |
-          wget -O 网络流行新词.scel "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=网络流行新词"
-      
       - name: Generate Dictionary File
         run: |
           dotnet publish/ImeWlConverterCmd.dll -i:scel ./网络流行新词.scel -o:rime ./buzzwords.dict.yaml -ct:pinyin -os:linux -r:100
@@ -37,22 +35,24 @@ jobs:
             echo "::error::Dictionary file 'buzzwords.dict.yaml' was not generated."
             exit 1
           fi
-          echo "Dictionary file generated successfully."
+          echo "Success: Dictionary file generated."
 
-      - name: Write Dictionary Information
+      - name: Set Dictionary Metadata
         run: |
-          VERSION_DATE=$(TZ='Asia/Shanghai' date +'%Y%m%d')
+          TODAY=$(TZ='Asia/Shanghai' date +'%Y%m%d')
+          RELEASE_DATE=$(TZ='Asia/Shanghai' date +'%Y-%m-%d')
           
-          sed -i '1i ...' buzzwords.dict.yaml
-          sed -i '1i sort: by_weight' buzzwords.dict.yaml
-          sed -i "1i version: \"$VERSION_DATE\"" buzzwords.dict.yaml
-          sed -i '1i name: buzzwords' buzzwords.dict.yaml
-          sed -i '1i ---' buzzwords.dict.yaml
-
-
-      - name: Get Current Date for Release Title
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          cat > header.yaml <<EOF
+          ---
+          name: buzzwords
+          version: "$TODAY"
+          sort: by_weight
+          ...
+          EOF
+          
+          cat header.yaml buzzwords.dict.yaml > temp.yaml && mv temp.yaml buzzwords.dict.yaml
+          
+          echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_ENV
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v2
@@ -61,5 +61,6 @@ jobs:
           name: "搜狗网络流行新词词库"
           body: |
             使用 imewlconverter 自动生成的搜狗网络流行新词 Rime 拼音输入方案词库。
-            最近更新于：${{ steps.date.outputs.date }}
+            最近更新于：${{ env.RELEASE_DATE }}
           files: buzzwords.dict.yaml
+          make_latest: true
