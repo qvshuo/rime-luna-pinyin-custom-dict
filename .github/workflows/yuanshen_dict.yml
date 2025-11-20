@@ -49,8 +49,8 @@ jobs:
         run: |
           TODAY=$(TZ=Asia/Shanghai date +'%Y%m%d')
           
-          sed -i "0,/^name:/s//name: yuanshen/" yuanshen.dict.yaml
-          sed -i "0,/^version:/s//version: '$TODAY'/" yuanshen.dict.yaml
+          sed -i "0,/^name:.*/s//name: yuanshen/" yuanshen.dict.yaml
+          sed -i "0,/^version:.*/s//version: '$TODAY'/" yuanshen.dict.yaml
           
           echo "RELEASE_DATE=$TODAY" >> $GITHUB_ENV
 
