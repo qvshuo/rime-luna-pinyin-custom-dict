@@ -23,7 +23,7 @@ jobs:
       - name: Prepare Tools and Source
         run: |
           wget https://github.com/studyzy/imewlconverter/releases/download/v3.3.0/imewlconverter_linux-x64.tar.gz
-          tar -xzvf imewlconverter_Linux.tar.gz
+          tar -xzvf imewlconverter_Linux-x64.tar.gz
           
           wget -O 网络流行新词.scel "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=网络流行新词"
 
