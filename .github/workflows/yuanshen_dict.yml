@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+          cache: 'pip'
 
       - name: Install mw2fcitx
         run: pip install mw2fcitx
@@ -45,18 +46,14 @@ jobs:
           echo "Error: Failed to generate dictionary file after $MAX_RETRIES attempts."
           exit 1
 
-      - name: Set Dictionary Name
+      - name: Set Dictionary Metadata
         run: |
-          sed -i '2s/.*/name: yuanshen/' yuanshen.dict.yaml
-
-      - name: Set Dictionary Version
-        run: |
-          DATE=$(TZ=Asia/Shanghai date +'%Y%m%d')
-          sed -i "4s/.*/version: '$DATE'/" yuanshen.dict.yaml
-
-      - name: Get Current Date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          TODAY=$(TZ=Asia/Shanghai date +'%Y%m%d')
+          
+          sed -i "0,/^name:/s//name: yuanshen/" yuanshen.dict.yaml
+          sed -i "0,/^version:/s//version: '$TODAY'/" yuanshen.dict.yaml
+          
+          echo "RELEASE_DATE=$TODAY" >> $GITHUB_ENV
 
       - name: Update Latest Release
         uses: softprops/action-gh-release@v2
@@ -65,5 +62,6 @@ jobs:
           name: "原神词库"
           body: |
             使用 mw2fcitx 自动生成的原神 Rime 拼音输入方案词库。
-            最近更新于：${{ steps.date.outputs.date }}
+            最近更新于：${{ env.RELEASE_DATE }}
           files: yuanshen.dict.yaml
+          make_latest: true
