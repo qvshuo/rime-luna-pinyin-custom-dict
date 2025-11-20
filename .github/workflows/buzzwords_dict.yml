@@ -22,10 +22,10 @@ jobs:
 
       - name: Prepare Tools and Source
         run: |
-          wget -q https://github.com/studyzy/imewlconverter/releases/download/v3.2.0/imewlconverter_Linux.tar.gz
+          wget https://github.com/studyzy/imewlconverter/releases/download/v3.3.0/imewlconverter_linux-x64.tar.gz
           tar -xzvf imewlconverter_Linux.tar.gz
           
-          wget -q -O 网络流行新词.scel "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=网络流行新词"
+          wget -O 网络流行新词.scel "https://pinyin.sogou.com/d/dict/download_cell.php?id=4&name=网络流行新词"
 
       - name: Generate Dictionary File
         run: |
@@ -40,7 +40,6 @@ jobs:
       - name: Set Dictionary Metadata
         run: |
           TODAY=$(TZ='Asia/Shanghai' date +'%Y%m%d')
-          RELEASE_DATE=$(TZ='Asia/Shanghai' date +'%Y-%m-%d')
           
           cat > header.yaml <<EOF
           ---
@@ -52,7 +51,7 @@ jobs:
           
           cat header.yaml buzzwords.dict.yaml > temp.yaml && mv temp.yaml buzzwords.dict.yaml
           
-          echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_ENV
+          echo "RELEASE_DATE=$TODAY" >> $GITHUB_ENV
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v2
