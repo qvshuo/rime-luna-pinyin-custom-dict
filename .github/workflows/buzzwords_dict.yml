@@ -29,6 +29,7 @@ jobs:
 
       - name: Generate Dictionary File
         run: |
+          chmod +x ./publish/linux-x64/ImeWlConverterCmd
           ./publish/linux-x64/ImeWlConverterCmd -i:scel ./网络流行新词.scel -o:rime ./buzzwords.dict.yaml -ct:pinyin -os:linux -r:100
           
           if [ ! -f "buzzwords.dict.yaml" ]; then
