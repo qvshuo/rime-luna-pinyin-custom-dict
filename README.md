@@ -1,5 +1,5 @@
 # rime-luna-pinyin-custom-dict
-适用于 Rime 拼音输入方案的自定词库，使用 GitHub Actions 自动更新。
+适用于 Rime 拼音输入方案的自定词库，使用 GitHub Actions 每周自动更新，可在 [发布页面](https://github.com/qvshuo/rime-luna-pinyin-custom-dict/releases) 下载。
 
 - 原神词库：离不开 [mw2fcitx](https://github.com/outloudvi/mw2fcitx) 和 [fcitx5-pinyin-zhwiki](https://github.com/felixonmars/fcitx5-pinyin-zhwiki)。
 
