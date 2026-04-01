@@ -37,8 +37,8 @@ jobs:
             fi
 
             if [ $i -lt $MAX_RETRIES ]; then
-              echo "Warning: File not found after attempt $i. Retrying in 10 seconds..."
-              sleep 60
+              echo "Warning: File not found after attempt $i. Retrying in 10 minutes..."
+              sleep 600
             fi
           done
           
