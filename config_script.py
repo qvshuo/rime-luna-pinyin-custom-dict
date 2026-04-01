@@ -6,8 +6,11 @@ exports = {
         "kwargs": {
             "partial": "partial.json",
             "output": "titles.txt",
-            "request_delay": 3,
-            "user_agent": "RimeLunaPinyinCustomDict-GitHubAction/1.0 (https://github.com/qvshuo/rime-luna-pinyin-custom-dict)"
+            "request_delay": 30,
+            "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1",
+            "api_params": {
+                "aplimit": "max"
+            }
         }
     },
     "tweaks": tweaks,
